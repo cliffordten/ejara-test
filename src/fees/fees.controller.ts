@@ -9,7 +9,7 @@ export class FeesController {
   constructor(private readonly feeService: FeesService) {}
 
   @ApiResponse({
-    description: 'Get the avaerage fee for the latest block in blockcain',
+    description: 'Get the average fee for the latest block in blockcain',
     status: 200,
   })
   @Get('/latest')
@@ -18,7 +18,7 @@ export class FeesController {
   }
 
   @ApiResponse({
-    description: 'Get the avaerage fee for the block in blockcain by hash',
+    description: 'Get History List of all queries that is stored in Memory',
     status: 200,
   })
   @Get('/requestHistory')
@@ -27,7 +27,7 @@ export class FeesController {
   }
 
   @ApiResponse({
-    description: 'Get History List of all queries that is stored in Memory',
+    description: 'Get the average fee for the block in blockcain by hash',
     status: 200,
   })
   @ApiParam({
