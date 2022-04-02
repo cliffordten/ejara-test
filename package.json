@@ -76,5 +76,9 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "engines": {
+    "node": "14.16.1"
+  },
+  "postinstall": "yarn prisma generate && yarn prisma:init"
 }
