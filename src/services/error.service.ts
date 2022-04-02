@@ -36,7 +36,7 @@ export class ErrorService extends HttpException {
         console.log(
           '%cerror.service.ts line:27 error.request',
           'color: #007acc;',
-          error.response,
+          error,
         );
         throw new HttpException(
           {

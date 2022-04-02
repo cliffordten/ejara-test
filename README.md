@@ -30,6 +30,7 @@ Ejara NodeJs test build with NestJs application.
 
 ```bash
 $ yarn install
+$ yarn run prisma:init # initialize db
 ```
 
 ## Running the app
