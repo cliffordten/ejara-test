@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ResultHistoryModel, ResultModel } from './fees.model';
-import { FeesService } from './fees.service';
+import { ResultHistoryModel, ResultModel } from '../models/fees.model';
+import { FeesService } from '../services/fees.service';
 import { ApiParam, ApiTags, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('Fees Module')
@@ -9,7 +9,7 @@ export class FeesController {
   constructor(private readonly feeService: FeesService) {}
 
   @ApiResponse({
-    description: 'Get the average fee for the latest block in blockcain',
+    description: 'Get the average fee for the latest block in blockchain',
     status: 200,
   })
   @Get('/latest')
@@ -27,7 +27,7 @@ export class FeesController {
   }
 
   @ApiResponse({
-    description: 'Get the average fee for the block in blockcain by hash',
+    description: 'Get the average fee for the block in blockchain by hash',
     status: 200,
   })
   @ApiParam({

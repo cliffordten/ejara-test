@@ -9,7 +9,6 @@ async function bootstrap() {
     .setTitle('Blockchain transaction fees')
     .setDescription('NodeJs Ejara test with Nestjs')
     .setVersion('1.0')
-    .addTag('Blockchain')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

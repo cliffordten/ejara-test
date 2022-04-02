@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ResultHistoryModel, ResultModel } from './fees.model';
+import { ResultHistoryModel, ResultModel } from '../models/fees.model';
 import axios from 'axios';
 
 const fetchUrl = 'https://tez.nodes.ejaraapis.xyz/chains/main/blocks/';
