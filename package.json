@@ -78,7 +78,7 @@
     "testEnvironment": "node"
   },
   "engines": {
-    "node": "14.16.1"
+    "node": "16.13.0"
   },
   "postinstall": "yarn prisma generate && yarn prisma:init"
 }
