@@ -22,7 +22,8 @@
     "prisma:init": "yarn prisma migrate dev --name init",
     "prisma:migrate": "yarn prisma migrate dev",
     "docker:up": "sudo docker-compose up",
-    "docker:down": "sudo docker-compose down"
+    "docker:down": "sudo docker-compose down",
+    "postinstall": "yarn prisma:init"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -79,6 +80,5 @@
   },
   "engines": {
     "node": "16.13.0"
-  },
-  "postinstall": "yarn prisma generate && yarn prisma:init"
+  }
 }
