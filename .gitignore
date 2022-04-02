@@ -2,7 +2,7 @@
 /dist
 /node_modules
 /pgdata
-/prisma/migration
+/prisma/migrations
 # Logs
 logs
 *.log
@@ -34,3 +34,9 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+/node_modules
+/dist
+npm-debug.log
+.DS_Store
+/*.env
