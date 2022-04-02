@@ -9,7 +9,6 @@ const fetchUrl = 'https://tez.nodes.ejaraapis.xyz/chains/main/blocks/';
 
 @Injectable()
 export class FeesService {
-  private resultHistory: ResultHistoryModel[] = [];
   private blockHash: string;
 
   constructor(
