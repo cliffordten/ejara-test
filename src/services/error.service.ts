@@ -4,7 +4,7 @@ import { AxiosError } from 'axios';
 @Injectable()
 export class ErrorService extends HttpException {
   throwError = (error: AxiosError, requestValue: string = null) => {
-    switch (error.response.status) {
+    switch (error?.response?.status) {
       case HttpStatus.BAD_REQUEST:
         if (requestValue) {
           throw new HttpException(
