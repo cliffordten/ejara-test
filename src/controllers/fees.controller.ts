@@ -14,7 +14,7 @@ export class FeesController {
   })
   @Get('/latest')
   async getLatestBlockFee(): Promise<ResultModel> {
-    return await this.feeService.computeReqResult();
+    return await this.feeService.computeRequestResult();
   }
 
   @ApiResponse({
@@ -22,8 +22,8 @@ export class FeesController {
     status: 200,
   })
   @Get('/requestHistory')
-  getRequestHistory(): { history: ResultHistoryModel[] } {
-    return { history: this.feeService.getResultHistory() };
+  async getRequestHistory(): Promise<{ history: ResultHistoryModel[] }> {
+    return { history: await this.feeService.getResultHistory() };
   }
 
   @ApiResponse({
@@ -38,8 +38,12 @@ export class FeesController {
   })
   @Get(':block_number')
   async getBlockFee(
-    @Param('block_number') blockNumber: string,
+    @Param('block_number') blockHash: string,
   ): Promise<ResultModel> {
-    return await this.feeService.computeReqResult(blockNumber);
+    if (!blockHash) {
+      throw new Error('Block Hash (block_number) is required');
+    }
+
+    return await this.feeService.computeRequestResult(blockHash);
   }
 }

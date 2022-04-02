@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ResultHistoryModel, ResultModel } from '../models/fees.model';
 import axios from 'axios';
+import { Fee, Prisma } from '@prisma/client';
+import { PrismaService } from './prisma.service';
+import { ErrorService } from './error.service';
 
 const fetchUrl = 'https://tez.nodes.ejaraapis.xyz/chains/main/blocks/';
 
@@ -9,77 +12,118 @@ export class FeesService {
   private resultHistory: ResultHistoryModel[] = [];
   private blockHash: string;
 
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly newError: ErrorService,
+  ) {}
+
+  // create fee record
+  private async createFee(data: Prisma.FeeCreateInput): Promise<Fee> {
+    return this.prisma.fee.create({
+      data,
+    });
+  }
+
+  // get all fee record
+  private async getAllFee(): Promise<Fee[]> {
+    return this.prisma.fee.findMany();
+  }
+
   // get the latest block number from the block chain
   private getLatestBlockHash = async (): Promise<string> => {
-    const { data } = await axios.get(fetchUrl);
+    try {
+      const { data } = await axios.get(fetchUrl);
 
-    return data[0][0];
+      return data[0][0];
+    } catch (error) {
+      this.newError.throwError(error);
+    }
   };
 
   // get the block transaction fees given the block hash or block number
-  private getBlockTranFees = async (hash: string = null): Promise<number[]> => {
-    this.blockHash = hash || (await this.getLatestBlockHash());
+  private getBlockTransactionFees = async (
+    hash: string = null,
+  ): Promise<number[]> => {
+    try {
+      this.blockHash = hash || (await this.getLatestBlockHash());
 
-    const { data } = await axios.get(`${fetchUrl}/${this.blockHash}`);
+      const { data } = await axios.get(`${fetchUrl}/${this.blockHash}`);
 
-    return data?.operations?.reduce((prev: any, curr: any) => {
-      const curContent = [];
+      return data?.operations?.reduce((previous: any, current: any) => {
+        const currentContent = [];
 
-      curr.forEach((el: any) => {
-        curContent.push(...el?.contents);
-      });
+        current.forEach((el: any) => {
+          currentContent.push(...el?.contents);
+        });
 
-      const transFees = curContent
-        ?.filter((item: any) => item?.kind === 'transaction')
-        ?.map((item: any) => Number(item?.fee));
+        const transactionFees = currentContent
+          ?.filter((item: any) => item?.kind === 'transaction')
+          ?.map((item: any) => Number(item?.fee));
 
-      return [...prev, ...transFees];
-    }, []);
+        return [...previous, ...transactionFees];
+      }, []);
+    } catch (error) {
+      this.newError.throwError(error, hash);
+    }
   };
 
   // compute median value given an array of numbers
-  private computeMedian = (arr: number[]): number => {
-    if (!arr.length) return undefined;
+  private computeMedian = (items: number[]): number => {
+    if (!items.length) return undefined;
 
-    const sortedArr = [...arr].sort((a, b) => a - b);
-    const mid = Math.floor(sortedArr.length / 2);
+    const sortedArray = [...items].sort((a, b) => a - b);
+    const middle = Math.floor(sortedArray.length / 2);
 
-    return sortedArr.length % 2 === 0
-      ? (sortedArr[mid - 1] + sortedArr[mid]) / 2
-      : sortedArr[mid];
+    return sortedArray.length % 2 === 0
+      ? (sortedArray[middle - 1] + sortedArray[middle]) / 2
+      : sortedArray[middle];
   };
 
   // compute the average value of a given array of numbers
-  private computeAverage = (arr: number[]): number => {
-    if (!arr.length) return undefined;
+  private computeAverage = (items: number[]): number => {
+    if (!items.length) return undefined;
 
-    const arrSum = arr.reduce((sum, el) => sum + el, 0);
+    const itemSum = items.reduce((sum, el) => sum + el, 0);
 
-    return arrSum / arr.length;
+    return itemSum / items.length;
   };
 
   // compute the request result for the avialable routes
-  computeReqResult = async (hash: string = null): Promise<ResultModel> => {
-    const transFees = await this.getBlockTranFees(hash);
+  computeRequestResult = async (hash: string = null): Promise<ResultModel> => {
+    try {
+      const transactionFees = await this.getBlockTransactionFees(hash);
 
-    const feeResult = {
-      id: new Date().valueOf(),
-      min: transFees.sort((a, b) => a - b)[0],
-      max: transFees.sort((a, b) => b - a)[0],
-      median: this.computeMedian(transFees),
-      average: this.computeAverage(transFees),
-    };
+      const feeData = {
+        min: transactionFees.sort((a, b) => a - b)[0],
+        max: transactionFees.sort((a, b) => b - a)[0],
+        median: this.computeMedian(transactionFees),
+        average: this.computeAverage(transactionFees),
+        block: this.blockHash,
+        date: new Date(),
+      };
 
-    this.resultHistory.push({
-      block: this.blockHash,
-      result_data: feeResult,
-    });
+      const fee = await this.createFee(feeData);
 
-    return feeResult;
+      return fee;
+    } catch (error) {
+      this.newError.throwError(error, hash);
+    }
   };
 
   // get the history of all request that is in memory
-  getResultHistory = (): ResultHistoryModel[] => {
-    return this.resultHistory;
+  getResultHistory = async (): Promise<ResultHistoryModel[]> => {
+    try {
+      const allFee = await this.getAllFee();
+      return allFee.reduce(
+        (previous, current) => [
+          ...previous,
+          {
+            block: current.block,
+            result_data: current,
+          },
+        ],
+        [],
+      );
+    } catch (error) {}
   };
 }

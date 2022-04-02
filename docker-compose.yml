@@ -1,0 +1,18 @@
+version: "3.8" # optional since v1.27.0
+services:
+  postgres:
+    image: "postgres:latest"
+    networks:
+      - webnet
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_DB: "${DB_NAME}"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+networks:
+  webnet:

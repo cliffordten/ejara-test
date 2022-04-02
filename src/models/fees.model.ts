@@ -1,6 +1,6 @@
 export class ResultModel {
   constructor(
-    public id: number,
+    public id: string,
     public min: number,
     public max: number,
     public average: number,
