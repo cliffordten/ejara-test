@@ -26,11 +26,29 @@
 
 Ejara NodeJs test build with NestJs application.
 
+
+## Requirements
+
+```bash
+$ node v16.13.0
+$ yarn
+$ nestjs
+$ postgres
+
+```
+
+
 ## Installation
 
 ```bash
 $ yarn install
-$ yarn run prisma:init # initialize db
+
+# create a file .env at the root of the project. then add a key 'DATABASE_URL' pointing to the link to your postgres database
+$ eg: DATABASE_URL=postgresql://user:password@localhost:5432/database?schema=public
+
+# initialize db
+$ yarn run prisma:init 
+
 ```
 
 ## Running the app
